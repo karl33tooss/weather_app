@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'core/router.dart'; // Імпортуємо наш файл з налаштуваннями
+import 'core/service_locator.dart';
 
-void main() {
+void main() async { // 1. Додаємо async
+  // Це потрібно, щоб Flutter ініціалізувався до запуску іншого коду
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // 2. Налаштовуємо наш GetIt (створюємо Dio і т.д.)
+  await setupLocator();
+
   runApp(const WeatherApp());
 }
 
