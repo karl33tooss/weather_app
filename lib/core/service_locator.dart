@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'constants.dart';
 
+import '../data/repositories/weather_repository.dart';
+
 // Створюємо глобальний об'єкт "getIt" (наш рюкзак)
 final getIt = GetIt.instance;
 
@@ -35,5 +37,6 @@ Future<void> setupLocator() async {
     return dio;
   });
 
+  getIt.registerLazySingleton<WeatherRepository>(() => WeatherRepository());
   // Пізніше тут ми додамо реєстрацію Cubit-ів та репозиторіїв
 }
