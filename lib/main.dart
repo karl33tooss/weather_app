@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/router.dart'; // Імпортуємо наш файл з налаштуваннями
 
 void main() {
   runApp(const WeatherApp());
@@ -9,15 +10,16 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      // Вимикаємо стрічку "Debug" у правому верхньому куті
+    // Зверни увагу: .router
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Weather App',
-      home: Scaffold(
-        body: Center(
-          child: Text("Weather App Setup Complete"),
-        ),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blueAccent,
       ),
+      // Ось тут ми підключаємо наш конфіг
+      routerConfig: router,
     );
   }
 }
