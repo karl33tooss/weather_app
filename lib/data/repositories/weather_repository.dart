@@ -14,7 +14,7 @@ class WeatherRepository {
       // base url ми вже налаштували в Dio, тому пишемо тільки кінцівку шляху '/weather'
       // q - це параметр запиту (query), який вимагає OpenWeatherMap для назви міста
       final response = await _dio.get(
-        '/weather',
+        '/forecast',
         queryParameters: {'q': city},
       );
 
