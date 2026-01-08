@@ -156,7 +156,7 @@ extension WeatherStatePatterns on WeatherState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(WeatherModel weather)? success,
+    TResult Function(ForecastModel forecast)? success,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -167,7 +167,7 @@ extension WeatherStatePatterns on WeatherState {
       case _Loading() when loading != null:
         return loading();
       case _Success() when success != null:
-        return success(_that.weather);
+        return success(_that.forecast);
       case _Error() when error != null:
         return error(_that.message);
       case _:
@@ -192,7 +192,7 @@ extension WeatherStatePatterns on WeatherState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(WeatherModel weather) success,
+    required TResult Function(ForecastModel forecast) success,
     required TResult Function(String message) error,
   }) {
     final _that = this;
@@ -202,7 +202,7 @@ extension WeatherStatePatterns on WeatherState {
       case _Loading():
         return loading();
       case _Success():
-        return success(_that.weather);
+        return success(_that.forecast);
       case _Error():
         return error(_that.message);
       case _:
@@ -226,7 +226,7 @@ extension WeatherStatePatterns on WeatherState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(WeatherModel weather)? success,
+    TResult? Function(ForecastModel forecast)? success,
     TResult? Function(String message)? error,
   }) {
     final _that = this;
@@ -236,7 +236,7 @@ extension WeatherStatePatterns on WeatherState {
       case _Loading() when loading != null:
         return loading();
       case _Success() when success != null:
-        return success(_that.weather);
+        return success(_that.forecast);
       case _Error() when error != null:
         return error(_that.message);
       case _:
@@ -288,9 +288,9 @@ class _Loading implements WeatherState {
 /// @nodoc
 
 class _Success implements WeatherState {
-  const _Success(this.weather);
+  const _Success(this.forecast);
 
-  final WeatherModel weather;
+  final ForecastModel forecast;
 
   /// Create a copy of WeatherState
   /// with the given fields replaced by the non-null parameter values.
@@ -304,15 +304,16 @@ class _Success implements WeatherState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _Success &&
-            (identical(other.weather, weather) || other.weather == weather));
+            (identical(other.forecast, forecast) ||
+                other.forecast == forecast));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, weather);
+  int get hashCode => Object.hash(runtimeType, forecast);
 
   @override
   String toString() {
-    return 'WeatherState.success(weather: $weather)';
+    return 'WeatherState.success(forecast: $forecast)';
   }
 }
 
@@ -322,9 +323,9 @@ abstract mixin class _$SuccessCopyWith<$Res>
   factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) =
       __$SuccessCopyWithImpl;
   @useResult
-  $Res call({WeatherModel weather});
+  $Res call({ForecastModel forecast});
 
-  $WeatherModelCopyWith<$Res> get weather;
+  $ForecastModelCopyWith<$Res> get forecast;
 }
 
 /// @nodoc
@@ -338,13 +339,13 @@ class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? weather = null,
+    Object? forecast = null,
   }) {
     return _then(_Success(
-      null == weather
-          ? _self.weather
-          : weather // ignore: cast_nullable_to_non_nullable
-              as WeatherModel,
+      null == forecast
+          ? _self.forecast
+          : forecast // ignore: cast_nullable_to_non_nullable
+              as ForecastModel,
     ));
   }
 
@@ -352,9 +353,9 @@ class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $WeatherModelCopyWith<$Res> get weather {
-    return $WeatherModelCopyWith<$Res>(_self.weather, (value) {
-      return _then(_self.copyWith(weather: value));
+  $ForecastModelCopyWith<$Res> get forecast {
+    return $ForecastModelCopyWith<$Res>(_self.forecast, (value) {
+      return _then(_self.copyWith(forecast: value));
     });
   }
 }
