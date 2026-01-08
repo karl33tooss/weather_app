@@ -1,23 +1,22 @@
 import 'package:go_router/go_router.dart';
 import '../ui/screens/home_screen.dart';
-import '../ui/screens/search_screen.dart';
+import '../ui/screens/forecast_report_screen.dart'; 
+import '../data/models/forecast_model.dart';        
 
-// Це наша глобальна змінна роутера
 final router = GoRouter(
-  // initialLocation - це те, з чого додаток стартує
-  initialLocation: '/', 
-  
+  initialLocation: '/',
   routes: [
-    // Маршрут 1: Головна сторінка
     GoRoute(
       path: '/',
       builder: (context, state) => const HomeScreen(),
     ),
-    
-    // Маршрут 2: Пошук
+    // 👇 НОВИЙ МАРШРУТ
     GoRoute(
-      path: '/search',
-      builder: (context, state) => const SearchScreen(),
+      path: '/details',
+      builder: (context, state) {
+        final forecast = state.extra as ForecastModel; 
+        return ForecastReportScreen(forecast: forecast);
+      },
     ),
   ],
 );

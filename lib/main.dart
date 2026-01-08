@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'core/router.dart'; // Імпортуємо наш файл з налаштуваннями
+import 'package:google_fonts/google_fonts.dart';
+import 'core/router.dart';
 import 'core/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
-
   runApp(const WeatherApp());
 }
 
@@ -14,16 +14,15 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Зверни увагу: .router
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      routerConfig: router,
       title: 'Weather App',
       theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blueAccent,
+        // <--- ВСТАНОВЛЮЄМО ШРИФТ ДЛЯ ВСЬОГО ДОДАТКА
+        textTheme: GoogleFonts.montserratTextTheme(),
+        primarySwatch: Colors.blue,
       ),
-      // Ось тут ми підключаємо наш конфіг
-      routerConfig: router,
     );
   }
 }

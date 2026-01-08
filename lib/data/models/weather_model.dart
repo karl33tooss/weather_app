@@ -24,6 +24,7 @@ abstract class MainInfo with _$MainInfo {
   const factory MainInfo({
     required double temp, // Температура
     @JsonKey(name: 'feels_like') required double feelsLike, // Відчувається як
+    required int humidity,
   }) = _MainInfo;
 
   factory MainInfo.fromJson(Map<String, dynamic> json) => 

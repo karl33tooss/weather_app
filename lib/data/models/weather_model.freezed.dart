@@ -388,7 +388,8 @@ class __$WeatherModelCopyWithImpl<$Res>
 mixin _$MainInfo {
   double get temp; // Температура
   @JsonKey(name: 'feels_like')
-  double get feelsLike;
+  double get feelsLike; // Відчувається як
+  int get humidity;
 
   /// Create a copy of MainInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -407,16 +408,18 @@ mixin _$MainInfo {
             other is MainInfo &&
             (identical(other.temp, temp) || other.temp == temp) &&
             (identical(other.feelsLike, feelsLike) ||
-                other.feelsLike == feelsLike));
+                other.feelsLike == feelsLike) &&
+            (identical(other.humidity, humidity) ||
+                other.humidity == humidity));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, temp, feelsLike);
+  int get hashCode => Object.hash(runtimeType, temp, feelsLike, humidity);
 
   @override
   String toString() {
-    return 'MainInfo(temp: $temp, feelsLike: $feelsLike)';
+    return 'MainInfo(temp: $temp, feelsLike: $feelsLike, humidity: $humidity)';
   }
 }
 
@@ -425,7 +428,10 @@ abstract mixin class $MainInfoCopyWith<$Res> {
   factory $MainInfoCopyWith(MainInfo value, $Res Function(MainInfo) _then) =
       _$MainInfoCopyWithImpl;
   @useResult
-  $Res call({double temp, @JsonKey(name: 'feels_like') double feelsLike});
+  $Res call(
+      {double temp,
+      @JsonKey(name: 'feels_like') double feelsLike,
+      int humidity});
 }
 
 /// @nodoc
@@ -442,6 +448,7 @@ class _$MainInfoCopyWithImpl<$Res> implements $MainInfoCopyWith<$Res> {
   $Res call({
     Object? temp = null,
     Object? feelsLike = null,
+    Object? humidity = null,
   }) {
     return _then(_self.copyWith(
       temp: null == temp
@@ -452,6 +459,10 @@ class _$MainInfoCopyWithImpl<$Res> implements $MainInfoCopyWith<$Res> {
           ? _self.feelsLike
           : feelsLike // ignore: cast_nullable_to_non_nullable
               as double,
+      humidity: null == humidity
+          ? _self.humidity
+          : humidity // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -549,15 +560,15 @@ extension MainInfoPatterns on MainInfo {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(
-            double temp, @JsonKey(name: 'feels_like') double feelsLike)?
+    TResult Function(double temp, @JsonKey(name: 'feels_like') double feelsLike,
+            int humidity)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _MainInfo() when $default != null:
-        return $default(_that.temp, _that.feelsLike);
+        return $default(_that.temp, _that.feelsLike, _that.humidity);
       case _:
         return orElse();
     }
@@ -578,13 +589,14 @@ extension MainInfoPatterns on MainInfo {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(double temp, @JsonKey(name: 'feels_like') double feelsLike)
+    TResult Function(double temp, @JsonKey(name: 'feels_like') double feelsLike,
+            int humidity)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _MainInfo():
-        return $default(_that.temp, _that.feelsLike);
+        return $default(_that.temp, _that.feelsLike, _that.humidity);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -604,14 +616,14 @@ extension MainInfoPatterns on MainInfo {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(
-            double temp, @JsonKey(name: 'feels_like') double feelsLike)?
+    TResult? Function(double temp,
+            @JsonKey(name: 'feels_like') double feelsLike, int humidity)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _MainInfo() when $default != null:
-        return $default(_that.temp, _that.feelsLike);
+        return $default(_that.temp, _that.feelsLike, _that.humidity);
       case _:
         return null;
     }
@@ -623,7 +635,8 @@ extension MainInfoPatterns on MainInfo {
 class _MainInfo implements MainInfo {
   const _MainInfo(
       {required this.temp,
-      @JsonKey(name: 'feels_like') required this.feelsLike});
+      @JsonKey(name: 'feels_like') required this.feelsLike,
+      required this.humidity});
   factory _MainInfo.fromJson(Map<String, dynamic> json) =>
       _$MainInfoFromJson(json);
 
@@ -633,6 +646,9 @@ class _MainInfo implements MainInfo {
   @override
   @JsonKey(name: 'feels_like')
   final double feelsLike;
+// Відчувається як
+  @override
+  final int humidity;
 
   /// Create a copy of MainInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -656,16 +672,18 @@ class _MainInfo implements MainInfo {
             other is _MainInfo &&
             (identical(other.temp, temp) || other.temp == temp) &&
             (identical(other.feelsLike, feelsLike) ||
-                other.feelsLike == feelsLike));
+                other.feelsLike == feelsLike) &&
+            (identical(other.humidity, humidity) ||
+                other.humidity == humidity));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, temp, feelsLike);
+  int get hashCode => Object.hash(runtimeType, temp, feelsLike, humidity);
 
   @override
   String toString() {
-    return 'MainInfo(temp: $temp, feelsLike: $feelsLike)';
+    return 'MainInfo(temp: $temp, feelsLike: $feelsLike, humidity: $humidity)';
   }
 }
 
@@ -676,7 +694,10 @@ abstract mixin class _$MainInfoCopyWith<$Res>
       __$MainInfoCopyWithImpl;
   @override
   @useResult
-  $Res call({double temp, @JsonKey(name: 'feels_like') double feelsLike});
+  $Res call(
+      {double temp,
+      @JsonKey(name: 'feels_like') double feelsLike,
+      int humidity});
 }
 
 /// @nodoc
@@ -693,6 +714,7 @@ class __$MainInfoCopyWithImpl<$Res> implements _$MainInfoCopyWith<$Res> {
   $Res call({
     Object? temp = null,
     Object? feelsLike = null,
+    Object? humidity = null,
   }) {
     return _then(_MainInfo(
       temp: null == temp
@@ -703,6 +725,10 @@ class __$MainInfoCopyWithImpl<$Res> implements _$MainInfoCopyWith<$Res> {
           ? _self.feelsLike
           : feelsLike // ignore: cast_nullable_to_non_nullable
               as double,
+      humidity: null == humidity
+          ? _self.humidity
+          : humidity // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }

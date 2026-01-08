@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ForecastModel {
-  List<ForecastItem> get list; // Список прогнозів (кожні 3 години)
+  List<ForecastItem> get list;
   City get city;
 
   /// Create a copy of ForecastModel
@@ -272,7 +272,6 @@ class _ForecastModel implements ForecastModel {
     return EqualUnmodifiableListView(_list);
   }
 
-// Список прогнозів (кожні 3 години)
   @override
   final City city;
 
@@ -366,9 +365,10 @@ class __$ForecastModelCopyWithImpl<$Res>
 
 /// @nodoc
 mixin _$ForecastItem {
-  int get dt; // Час у форматі Unix (секунди)
-  MainInfo get main; // Температура (беремо з weather_model.dart)
-  List<WeatherInfo> get weather; // Опис (беремо з weather_model.dart)
+  int get dt;
+  MainInfo get main;
+  List<WeatherInfo> get weather;
+  Wind get wind; // <--- ДОДАЛИ ВІТЕР
   @JsonKey(name: 'dt_txt')
   String get dtTxt;
 
@@ -391,17 +391,18 @@ mixin _$ForecastItem {
             (identical(other.dt, dt) || other.dt == dt) &&
             (identical(other.main, main) || other.main == main) &&
             const DeepCollectionEquality().equals(other.weather, weather) &&
+            (identical(other.wind, wind) || other.wind == wind) &&
             (identical(other.dtTxt, dtTxt) || other.dtTxt == dtTxt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, dt, main,
-      const DeepCollectionEquality().hash(weather), dtTxt);
+      const DeepCollectionEquality().hash(weather), wind, dtTxt);
 
   @override
   String toString() {
-    return 'ForecastItem(dt: $dt, main: $main, weather: $weather, dtTxt: $dtTxt)';
+    return 'ForecastItem(dt: $dt, main: $main, weather: $weather, wind: $wind, dtTxt: $dtTxt)';
   }
 }
 
@@ -415,9 +416,11 @@ abstract mixin class $ForecastItemCopyWith<$Res> {
       {int dt,
       MainInfo main,
       List<WeatherInfo> weather,
+      Wind wind,
       @JsonKey(name: 'dt_txt') String dtTxt});
 
   $MainInfoCopyWith<$Res> get main;
+  $WindCopyWith<$Res> get wind;
 }
 
 /// @nodoc
@@ -435,6 +438,7 @@ class _$ForecastItemCopyWithImpl<$Res> implements $ForecastItemCopyWith<$Res> {
     Object? dt = null,
     Object? main = null,
     Object? weather = null,
+    Object? wind = null,
     Object? dtTxt = null,
   }) {
     return _then(_self.copyWith(
@@ -450,6 +454,10 @@ class _$ForecastItemCopyWithImpl<$Res> implements $ForecastItemCopyWith<$Res> {
           ? _self.weather
           : weather // ignore: cast_nullable_to_non_nullable
               as List<WeatherInfo>,
+      wind: null == wind
+          ? _self.wind
+          : wind // ignore: cast_nullable_to_non_nullable
+              as Wind,
       dtTxt: null == dtTxt
           ? _self.dtTxt
           : dtTxt // ignore: cast_nullable_to_non_nullable
@@ -464,6 +472,16 @@ class _$ForecastItemCopyWithImpl<$Res> implements $ForecastItemCopyWith<$Res> {
   $MainInfoCopyWith<$Res> get main {
     return $MainInfoCopyWith<$Res>(_self.main, (value) {
       return _then(_self.copyWith(main: value));
+    });
+  }
+
+  /// Create a copy of ForecastItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WindCopyWith<$Res> get wind {
+    return $WindCopyWith<$Res>(_self.wind, (value) {
+      return _then(_self.copyWith(wind: value));
     });
   }
 }
@@ -562,14 +580,15 @@ extension ForecastItemPatterns on ForecastItem {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(int dt, MainInfo main, List<WeatherInfo> weather,
-            @JsonKey(name: 'dt_txt') String dtTxt)?
+            Wind wind, @JsonKey(name: 'dt_txt') String dtTxt)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _ForecastItem() when $default != null:
-        return $default(_that.dt, _that.main, _that.weather, _that.dtTxt);
+        return $default(
+            _that.dt, _that.main, _that.weather, _that.wind, _that.dtTxt);
       case _:
         return orElse();
     }
@@ -591,13 +610,14 @@ extension ForecastItemPatterns on ForecastItem {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(int dt, MainInfo main, List<WeatherInfo> weather,
-            @JsonKey(name: 'dt_txt') String dtTxt)
+            Wind wind, @JsonKey(name: 'dt_txt') String dtTxt)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _ForecastItem():
-        return $default(_that.dt, _that.main, _that.weather, _that.dtTxt);
+        return $default(
+            _that.dt, _that.main, _that.weather, _that.wind, _that.dtTxt);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -618,13 +638,14 @@ extension ForecastItemPatterns on ForecastItem {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(int dt, MainInfo main, List<WeatherInfo> weather,
-            @JsonKey(name: 'dt_txt') String dtTxt)?
+            Wind wind, @JsonKey(name: 'dt_txt') String dtTxt)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _ForecastItem() when $default != null:
-        return $default(_that.dt, _that.main, _that.weather, _that.dtTxt);
+        return $default(
+            _that.dt, _that.main, _that.weather, _that.wind, _that.dtTxt);
       case _:
         return null;
     }
@@ -638,6 +659,7 @@ class _ForecastItem implements ForecastItem {
       {required this.dt,
       required this.main,
       required final List<WeatherInfo> weather,
+      required this.wind,
       @JsonKey(name: 'dt_txt') required this.dtTxt})
       : _weather = weather;
   factory _ForecastItem.fromJson(Map<String, dynamic> json) =>
@@ -645,12 +667,9 @@ class _ForecastItem implements ForecastItem {
 
   @override
   final int dt;
-// Час у форматі Unix (секунди)
   @override
   final MainInfo main;
-// Температура (беремо з weather_model.dart)
   final List<WeatherInfo> _weather;
-// Температура (беремо з weather_model.dart)
   @override
   List<WeatherInfo> get weather {
     if (_weather is EqualUnmodifiableListView) return _weather;
@@ -658,7 +677,9 @@ class _ForecastItem implements ForecastItem {
     return EqualUnmodifiableListView(_weather);
   }
 
-// Опис (беремо з weather_model.dart)
+  @override
+  final Wind wind;
+// <--- ДОДАЛИ ВІТЕР
   @override
   @JsonKey(name: 'dt_txt')
   final String dtTxt;
@@ -686,17 +707,18 @@ class _ForecastItem implements ForecastItem {
             (identical(other.dt, dt) || other.dt == dt) &&
             (identical(other.main, main) || other.main == main) &&
             const DeepCollectionEquality().equals(other._weather, _weather) &&
+            (identical(other.wind, wind) || other.wind == wind) &&
             (identical(other.dtTxt, dtTxt) || other.dtTxt == dtTxt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, dt, main,
-      const DeepCollectionEquality().hash(_weather), dtTxt);
+      const DeepCollectionEquality().hash(_weather), wind, dtTxt);
 
   @override
   String toString() {
-    return 'ForecastItem(dt: $dt, main: $main, weather: $weather, dtTxt: $dtTxt)';
+    return 'ForecastItem(dt: $dt, main: $main, weather: $weather, wind: $wind, dtTxt: $dtTxt)';
   }
 }
 
@@ -712,10 +734,13 @@ abstract mixin class _$ForecastItemCopyWith<$Res>
       {int dt,
       MainInfo main,
       List<WeatherInfo> weather,
+      Wind wind,
       @JsonKey(name: 'dt_txt') String dtTxt});
 
   @override
   $MainInfoCopyWith<$Res> get main;
+  @override
+  $WindCopyWith<$Res> get wind;
 }
 
 /// @nodoc
@@ -734,6 +759,7 @@ class __$ForecastItemCopyWithImpl<$Res>
     Object? dt = null,
     Object? main = null,
     Object? weather = null,
+    Object? wind = null,
     Object? dtTxt = null,
   }) {
     return _then(_ForecastItem(
@@ -749,6 +775,10 @@ class __$ForecastItemCopyWithImpl<$Res>
           ? _self._weather
           : weather // ignore: cast_nullable_to_non_nullable
               as List<WeatherInfo>,
+      wind: null == wind
+          ? _self.wind
+          : wind // ignore: cast_nullable_to_non_nullable
+              as Wind,
       dtTxt: null == dtTxt
           ? _self.dtTxt
           : dtTxt // ignore: cast_nullable_to_non_nullable
@@ -763,6 +793,16 @@ class __$ForecastItemCopyWithImpl<$Res>
   $MainInfoCopyWith<$Res> get main {
     return $MainInfoCopyWith<$Res>(_self.main, (value) {
       return _then(_self.copyWith(main: value));
+    });
+  }
+
+  /// Create a copy of ForecastItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WindCopyWith<$Res> get wind {
+    return $WindCopyWith<$Res>(_self.wind, (value) {
+      return _then(_self.copyWith(wind: value));
     });
   }
 }
@@ -1072,6 +1112,300 @@ class __$CityCopyWithImpl<$Res> implements _$CityCopyWith<$Res> {
           ? _self.country
           : country // ignore: cast_nullable_to_non_nullable
               as String,
+    ));
+  }
+}
+
+/// @nodoc
+mixin _$Wind {
+  double get speed;
+
+  /// Create a copy of Wind
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $WindCopyWith<Wind> get copyWith =>
+      _$WindCopyWithImpl<Wind>(this as Wind, _$identity);
+
+  /// Serializes this Wind to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Wind &&
+            (identical(other.speed, speed) || other.speed == speed));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, speed);
+
+  @override
+  String toString() {
+    return 'Wind(speed: $speed)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $WindCopyWith<$Res> {
+  factory $WindCopyWith(Wind value, $Res Function(Wind) _then) =
+      _$WindCopyWithImpl;
+  @useResult
+  $Res call({double speed});
+}
+
+/// @nodoc
+class _$WindCopyWithImpl<$Res> implements $WindCopyWith<$Res> {
+  _$WindCopyWithImpl(this._self, this._then);
+
+  final Wind _self;
+  final $Res Function(Wind) _then;
+
+  /// Create a copy of Wind
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? speed = null,
+  }) {
+    return _then(_self.copyWith(
+      speed: null == speed
+          ? _self.speed
+          : speed // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [Wind].
+extension WindPatterns on Wind {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Wind value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Wind() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Wind value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Wind():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Wind value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Wind() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(double speed)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Wind() when $default != null:
+        return $default(_that.speed);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(double speed) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Wind():
+        return $default(_that.speed);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(double speed)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Wind() when $default != null:
+        return $default(_that.speed);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _Wind implements Wind {
+  const _Wind({required this.speed});
+  factory _Wind.fromJson(Map<String, dynamic> json) => _$WindFromJson(json);
+
+  @override
+  final double speed;
+
+  /// Create a copy of Wind
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$WindCopyWith<_Wind> get copyWith =>
+      __$WindCopyWithImpl<_Wind>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$WindToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Wind &&
+            (identical(other.speed, speed) || other.speed == speed));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, speed);
+
+  @override
+  String toString() {
+    return 'Wind(speed: $speed)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$WindCopyWith<$Res> implements $WindCopyWith<$Res> {
+  factory _$WindCopyWith(_Wind value, $Res Function(_Wind) _then) =
+      __$WindCopyWithImpl;
+  @override
+  @useResult
+  $Res call({double speed});
+}
+
+/// @nodoc
+class __$WindCopyWithImpl<$Res> implements _$WindCopyWith<$Res> {
+  __$WindCopyWithImpl(this._self, this._then);
+
+  final _Wind _self;
+  final $Res Function(_Wind) _then;
+
+  /// Create a copy of Wind
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? speed = null,
+  }) {
+    return _then(_Wind(
+      speed: null == speed
+          ? _self.speed
+          : speed // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
