@@ -44,3 +44,6 @@ dev_dependencies:
 # --- ОСЬ ТУТ МАЄ БУТИ ЦЕЙ БЛОК (В САМОМУ НИЗУ) ---
 flutter:
   uses-material-design: true
+  
+  assets:
+    - assets/icons/

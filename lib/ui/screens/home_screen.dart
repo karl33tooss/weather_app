@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../logic/weather_cubit.dart';
 import '../../logic/weather_state.dart';
 import '../../data/models/forecast_model.dart';
+import '../../core/icon_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,11 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
   BoxDecoration _glassDecoration({bool isActive = false}) {
     return BoxDecoration(
       color: isActive 
-          ? Colors.white.withValues(alpha: 0.6) // Майже білий (активний)
-          : Colors.white.withValues(alpha: 0.3), // Світло-молочний (звичайний)
+          ? Colors.white.withValues(alpha: 0.8) // Майже білий (активний)
+          : Colors.white.withValues(alpha: 0.5), // Світло-молочний (звичайний)
       borderRadius: BorderRadius.circular(25),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.4),
+        color: Colors.white.withValues(alpha: 0.6),
         width: 1.5,
       ),
       boxShadow: [
@@ -60,19 +61,17 @@ class _HomeScreenState extends State<HomeScreen> {
           height: double.infinity,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFFEE3BC), Color(0xFFF39876)],
+              colors: [Color.fromARGB(255, 255, 235, 207), Color(0xFFF39876)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
           child: SafeArea(
-            // Використовуємо ListView для всього екрана.
-            // Це гарантує, що SearchBar і контент прокручуються разом
-            // і ніколи не викликають overflow.
+            // Використовуємо ListView для всього екрана, щоб уникнути overflow
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 20),
               children: [
-                // --- ПОШУК (Виніс окремим віджетом для чистоти) ---
+                // --- ПОШУК ---
                 _buildSearchSection(),
 
                 const SizedBox(height: 10),
@@ -80,7 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 // --- ГОЛОВНИЙ КОНТЕНТ ---
                 BlocBuilder<WeatherCubit, WeatherState>(
                   builder: (context, state) {
-                    // Використовуємо .when, щоб уникнути помилок типів
                     return state.when(
                       initial: () => const SizedBox(height: 50),
                       loading: () => SizedBox(
@@ -105,8 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // --- ВІДЖЕТ ПОШУКУ ---
   Widget _buildSearchSection() {
-    // Тут ми використовуємо Builder, щоб отримати context, який має доступ до Provider
-    // (хоча в цій архітектурі це не критично, бо BlocProvider вище, але так безпечніше)
     return Builder(
       builder: (context) {
         return Padding(
@@ -165,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 20),
           
-          // МІСТО
+          // МІСТО І ДАТА
           Text(
             forecast.city.name,
             style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: _textColor),
@@ -179,42 +175,56 @@ class _HomeScreenState extends State<HomeScreen> {
 
           const SizedBox(height: 30),
 
-          // ВЕЛИКА ІКОНКА
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1), // М'яка тінь
-                        blurRadius: 30, // Більший радіус розмиття для м'якості
-                        offset: const Offset(0, 10)
-                      )
-                    ]
+          // 👇 НОВЕ РОЗТАШУВАННЯ: РЯДОК (Температура + Іконка)
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center, // Розтягуємо по краях
+                crossAxisAlignment: CrossAxisAlignment.center, // Вирівнюємо по центру вертикально
+                children: [
+                  // ІКОНКА (Ліворуч)
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 255, 255, 255).withValues(alpha: 0.1), // М'яка тінь
+                          blurRadius: 30,
+                          offset: const Offset(0, 10)
+                        )
+                      ]
+                    ),
+                    child: Image.asset(
+                      IconHelper.getIconPath(current.weather.first.icon),
+                      width: 120, 
+                      height: 120,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  child: Image.network(
-                    "https://openweathermap.org/img/wn/${current.weather.first.icon}@4x.png",
-                    width: 180,
-                    height: 180,
-                    fit: BoxFit.contain,
+                  SizedBox(width: 50),
+                  // ТЕМПЕРАТУРА (Праворуч)
+                  Text(
+                    "${current.main.temp.round()}°",
+                    style: TextStyle(
+                      fontSize: 90, // Великий розмір
+                      fontWeight: FontWeight.bold,
+                      color: _textColor
+                    ),
                   ),
+                ],
+              ),
+              // ОПИС (Під низом)
+              SizedBox(height: 20,),
+              Text(
+                current.weather.first.description.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20, // Трохи збільшив для акценту
+                  fontWeight: FontWeight.w600, 
+                  letterSpacing: 1.2,
+                  color: _textColor.withValues(alpha: 0.7)
                 ),
-                Text(
-                  "${current.main.temp.round()}°",
-                  style: TextStyle(fontSize: 90, fontWeight: FontWeight.bold, color: _textColor),
-                ),
-                Text(
-                  current.weather.first.description.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.w600, 
-                    letterSpacing: 1.5,
-                    color: _textColor.withValues(alpha: 0.7)
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 40),
@@ -226,9 +236,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDetailItem(Icons.thermostat, "${current.main.feelsLike.round()}°", "Feels like"),
-                _buildDetailItem(Icons.air, "${current.wind.speed} m/s", "Wind"),
-                _buildDetailItem(Icons.water_drop, "${current.main.humidity}%", "Humidity"),
+                // Заміни назви файлів на свої реальні!
+                _buildDetailItem('assets/icons/thermometer.png', "${current.main.feelsLike.round()}°", "Feels like"),
+                _buildDetailItem('assets/icons/wind.png', "${current.wind.speed} m/s", "Wind"),
+                _buildDetailItem('assets/icons/humidity.png', "${current.main.humidity}%", "Humidity"),
               ],
             ),
           ),
@@ -259,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // ГОРИЗОНТАЛЬНИЙ СКРОЛ
           SizedBox(
-            height: 150, // 👈 ЗБІЛЬШИВ ВИСОТУ (було 140), щоб прибрати overflow всередині карток
+            height: 150,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 6,
@@ -268,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final isFirst = index == 0;
 
                 return Container(
-                  width: 100, // Фіксована ширина для кращого вигляду
+                  width: 100,
                   margin: const EdgeInsets.only(right: 15, bottom: 10, top: 5),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   decoration: _glassDecoration(isActive: isFirst),
@@ -284,8 +295,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Image.network(
-                        "https://openweathermap.org/img/wn/${item.weather.first.icon}.png",
+                      Image.asset(
+                        IconHelper.getIconPath(item.weather.first.icon),
                         width: 40,
                       ),
                       const SizedBox(height: 5),
@@ -309,10 +320,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDetailItem(IconData icon, String value, String label) {
+  // Тепер першим параметром приймаємо String iconPath замість IconData
+  Widget _buildDetailItem(String iconPath, String value, String label) {
     return Column(
       children: [
-        Icon(icon, color: _textColor.withValues(alpha: 0.5), size: 26),
+        // Замість Icon використовуємо Image.asset
+        Image.asset(
+          iconPath,
+          width: 30, // Той самий розмір, що був у іконки
+          height: 30,
+          // Цей рядок фарбує іконку в колір тексту (якщо іконки чорно-білі/прозорі). 
+          // Якщо твої іконки кольорові — видали рядок color!
+          // color: _textColor.withValues(alpha: 0.5), 
+        ),
         const SizedBox(height: 8),
         Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: _textColor)),
         Text(label, style: TextStyle(color: _textColor.withValues(alpha: 0.5), fontSize: 12)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart'; // Для форматування дати
 import '../../data/models/forecast_model.dart';
+import '../../core/icon_helper.dart';
 
 class ForecastReportScreen extends StatelessWidget {
   final ForecastModel forecast;
@@ -54,7 +55,7 @@ class ForecastReportScreen extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1), // Напівпрозорий блок
+                        color: Colors.white.withValues(alpha: 0.1), // Напівпрозорий блок
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -88,8 +89,8 @@ class ForecastReportScreen extends StatelessWidget {
                           ),
 
                           // Права частина: Іконка
-                          Image.network(
-                            "https://openweathermap.org/img/wn/${item.weather.first.icon}.png",
+                          Image.asset(
+                            IconHelper.getIconPath(item.weather.first.icon),
                             width: 50,
                           ),
                         ],
